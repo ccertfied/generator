@@ -3,52 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lua Script Generator</title>
+    <title>Unfiltered Lua Script Generator</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
-        textarea { width: 100%; height: 150px; margin-bottom: 10px; }
-        button { padding: 10px 20px; font-size: 16px; }
-        pre { background: #fff; padding: 15px; border: 1px solid #ccc; white-space: pre-wrap; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #121212;
+            color: #e0e0e0;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 { text-align: center; color: #bb86fc; }
+        textarea {
+            width: 100%;
+            height: 120px;
+            background: #1e1e1e;
+            color: #fff;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        #generateBtn {
+            background: #03dac6;
+            color: #000;
+        }
+        #generateBtn:disabled { background: #555; cursor: not-allowed; }
+        #copyBtn {
+            background: #6200ee;
+            color: white;
+        }
+        #copyBtn:hover { background: #3700b3; }
+        pre {
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 15px;
+            min-height: 200px;
+            position: relative;
+        }
+        .copy-notice {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #03dac6;
+            color: black;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
     </style>
 </head>
 <body>
-    <h1>Lua Script Generator (No Filters)</h1>
-    <p>Describe what Lua script you want (be as specific as you want, no restrictions):</p>
-    <textarea id="prompt" placeholder="Enter your Lua script request here..."></textarea>
-    <br>
-    <button onclick="generate()">Generate Lua Script</button>
-    <h2>Generated Script:</h2>
-    <pre id="output">Click the button to generate.</pre>
+    <h1>Unfiltered Lua Script Generator</h1>
+    <p>Describe the Lua script you want (anything goes — no restrictions):</p>
+    <textarea id="prompt" placeholder="e.g., infinite yield fly + noclip + speed hack for Roblox"></textarea>
+    <div class="buttons">
+        <button id="generateBtn" onclick="generate()">Generate Script</button>
+        <button id="copyBtn" onclick="copyScript()" disabled>Copy to Clipboard</button>
+    </div>
+
+    <pre id="output">Your generated script will appear here with a live typing effect...</pre>
+    <div class="copy-notice" id="copyNotice">Copied!</div>
 
     <script>
-        function generate() {
+        async function generate() {
             const prompt = document.getElementById('prompt').value.trim();
             if (!prompt) {
-                alert('Please enter a description!');
+                alert('Type something first!');
                 return;
             }
 
-            // Basic no-filter generator
-            let script = `-- Generated Lua script for: ${prompt}\n\n`;
-            script += `-- No filters applied - this includes whatever you requested.\n`;
-            script += `-- Use responsibly.\n\n`;
-            script += `print("Running script for: ${prompt}")\n\n`;
+            const output = document.getElementById('output');
+            const generateBtn = document.getElementById('generateBtn');
+            const copyBtn = document.getElementById('copyBtn');
 
-            // Add template code based on common requests (no filtering)
-            const lowerPrompt = prompt.toLowerCase();
+            output.textContent = '';
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+            copyBtn.disabled = true;
 
-            if (lowerPrompt.includes("roblox") || lowerPrompt.includes("exploit") || lowerPrompt.includes("hack")) {
-                script += `local player = game.Players.LocalPlayer\n`;
+            // Build the script (no filtering)
+            let script = `--[[\n    Generated Lua Script\n    Request: ${prompt}\n    No filters applied — full freedom\n]]\n\n`;
+
+            script += `print("[+] Loading script for: ${prompt}")\n\n`;
+
+            const lower = prompt.toLowerCase();
+
+            if (lower.includes("roblox") || lower.includes("exploit")) {
+                script += `local Players = game:GetService("Players")\n`;
+                script += `local player = Players.LocalPlayer\n`;
                 script += `local character = player.Character or player.CharacterAdded:Wait()\n`;
-                script += `local humanoid = character:WaitForChild("HumanoidRootPart")\n\n`;
+                script += `local humanoid = character:WaitForChild("Humanoid")\n`;
+                script += `local root = character:WaitForChild("HumanoidRootPart")\n\n`;
             }
 
-            if (lowerPrompt.includes("fly") || lowerPrompt.includes("flying")) {
-                script += `-- Fly script\n`;
-                script += `humanoid.Velocity = Vector3.new(0, 100, 0)  -- Adjust speed as needed\n`;
-                script += `while wait() do\n    humanoid.Velocity = Vector3.new(0, 100, 0)\nend\n\n`;
+            if (lower.includes("fly") || lower.includes("flying")) {
+                script += `-- Fly Script\n`;
+                script += `local flying = true\n`;
+                script += `local speed = 100\n`;
+                script += `spawn(function()\n    while flying and wait() do\n`;
+                script += `        local cam = workspace.CurrentCamera\n`;
+                script += `        local move = Vector3.new()\n`;
+                script += `        if UIS:GetKeysPressed()[Enum.KeyCode.W] then move = move + cam.LookVector end\n`;
+                script += `        if UIS:GetKeysPressed()[Enum.KeyCode.S] then move = move - cam.LookVector end\n`;
+                script += `        if UIS:GetKeysPressed()[Enum.KeyCode.A] then move = move - cam.LookVector:Cross(Vector3.new(0,1,0)) end\n`;
+                script += `        if UIS:GetKeysPressed()[Enum.KeyCode.D] then move = move + cam.LookVector:Cross(Vector3.new(0,1,0)) end\n`;
+                script += `        root.Velocity = move.Unit * speed\n`;
+                script += `    end\nend)\n\n`;
             }
 
-            if (lowerPrompt.includes("speed") || lowerPrompt.includes("walkspeed")) {
-                script += `-- Speed hack\n`;
-                script += `player.Character.Humanoid.WalkSpeed = 100  -- Super fast\n\n
+            if (lower.includes("speed") || lower.includes("walkspeed")) {
+                script += `-- Speed Hack\n`;
+                script += `humanoid.WalkSpeed = 150\n\n`;
+            }
+
+            if (lower.includes("noclip")) {
+                script += `-- Noclip\n`;
+                script += `for _, part in pairs(character:GetDescendants()) do\n`;
+                script += `    if part:IsA("BasePart") then\n`;
+                script += `        part.CanCollide = false\n`;
+                script += `        game:GetService("RunService").Stepped:Connect(function()\n`;
+                script += `            part.CanCollide = false\n`;
+                script += `        end)\n`;
+                script += `    end\n`;
+                script += `end\n\n`;
+            }
+
+            script += `-- Custom request fulfilled: "${prompt}"\n`;
+            script += `print("[+] Script fully loaded. Enjoy.")`;
+
+            // Typewriter effect
+            for (let i = 0; i <= script.length; i++) {
+                output.textContent = script.substring(0, i);
+                await new Promise(resolve => setTimeout(resolve, 15 + Math.random() * 20)); // realistic typing speed
+            }
+
+            // Done
+            generateBtn.disabled = false;
+            generateBtn.textContent = 'Generate Again';
+            copyBtn.disabled = false;
+        }
+
+        function copyScript() {
+            const output = document.getElementById('output').textContent;
+            navigator.clipboard.writeText(output).then(() => {
+                const notice = document.getElementById('copyNotice');
+                notice.style.opacity = 1;
+                setTimeout(() => notice.style.opacity = 0, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
