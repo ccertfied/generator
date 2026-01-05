@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lua Script Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+        textarea { width: 100%; height: 150px; margin-bottom: 10px; }
+        button { padding: 10px 20px; font-size: 16px; }
+        pre { background: #fff; padding: 15px; border: 1px solid #ccc; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Lua Script Generator (No Filters)</h1>
+    <p>Describe what Lua script you want (be as specific as you want, no restrictions):</p>
+    <textarea id="prompt" placeholder="Enter your Lua script request here..."></textarea>
+    <br>
+    <button onclick="generate()">Generate Lua Script</button>
+    <h2>Generated Script:</h2>
+    <pre id="output">Click the button to generate.</pre>
+
+    <script>
+        function generate() {
+            const prompt = document.getElementById('prompt').value.trim();
+            if (!prompt) {
+                alert('Please enter a description!');
+                return;
+            }
+
+            // Basic no-filter generator
+            let script = `-- Generated Lua script for: ${prompt}\n\n`;
+            script += `-- No filters applied - this includes whatever you requested.\n`;
+            script += `-- Use responsibly.\n\n`;
+            script += `print("Running script for: ${prompt}")\n\n`;
+
+            // Add template code based on common requests (no filtering)
+            const lowerPrompt = prompt.toLowerCase();
+
+            if (lowerPrompt.includes("roblox") || lowerPrompt.includes("exploit") || lowerPrompt.includes("hack")) {
+                script += `local player = game.Players.LocalPlayer\n`;
+                script += `local character = player.Character or player.CharacterAdded:Wait()\n`;
+                script += `local humanoid = character:WaitForChild("HumanoidRootPart")\n\n`;
+            }
+
+            if (lowerPrompt.includes("fly") || lowerPrompt.includes("flying")) {
+                script += `-- Fly script\n`;
+                script += `humanoid.Velocity = Vector3.new(0, 100, 0)  -- Adjust speed as needed\n`;
+                script += `while wait() do\n    humanoid.Velocity = Vector3.new(0, 100, 0)\nend\n\n`;
+            }
+
+            if (lowerPrompt.includes("speed") || lowerPrompt.includes("walkspeed")) {
+                script += `-- Speed hack\n`;
+                script += `player.Character.Humanoid.WalkSpeed = 100  -- Super fast\n\n
